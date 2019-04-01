@@ -4,7 +4,6 @@
 #include <QFontDatabase>
 #include <QFrame>
 #include <QGuiApplication>
-//#include <QApplication>
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QMainWindow>
@@ -24,6 +23,7 @@ public:
 
 protected:
   QStackedLayout* main_layout;
+  QStackedLayout* m_screen_stack;
   VirusScreen* m_screen;
   QLabel* m_greyscreen;
   int m_start_id, m_screen_id, m_help_id;
@@ -35,6 +35,7 @@ protected:
   void setToHelp();
   void setToStart();
   void woop(int count = 1);
+  void greyout(bool value = true);
 
   static const int WIDTH = 700; // 616;
   static const int HEIGHT = 480;

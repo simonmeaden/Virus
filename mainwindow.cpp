@@ -39,19 +39,26 @@ MainWindow::initGui()
   m_start_id = main_layout->addWidget(start);
 
   QFrame* screen_frame = new QFrame(this);
-  QStackedLayout screen_stack;
-  screen_stack.setStackingMode(QStackedLayout::StackAll);
-  screen_frame->setLayout(&screen_stack);
+
+  m_screen_stack = new QStackedLayout(this);
+  m_screen_stack->setStackingMode(QStackedLayout::StackAll);
+
+  screen_frame->setLayout(m_screen_stack);
 
   m_screen = new VirusScreen(this);
   connect(m_screen, &VirusScreen::gameFinished, this, &MainWindow::setToStart);
   connect(m_screen, &VirusScreen::crashed, this, &MainWindow::woop);
   connect(m_screen, &VirusScreen::crashed, this, &MainWindow::setToStart);
-  //  m_greyscreen = new QLabel(this);
+  connect(m_screen, &VirusScreen::crashed, this, &MainWindow::greyout);
+
+  m_greyscreen = new QLabel(this);
   //  m_greyscreen->setSizePolicy(QSizePolicy::Expanding,
-  //  QSizePolicy::Expanding); m_greyscreen->setStyleSheet("background_color:
-  //  0,0,0,50%;"); screen_stack.addWidget(m_greyscreen);
-  screen_stack.addWidget(m_screen);
+  //    QSizePolicy::Expanding);
+  m_greyscreen->setStyleSheet("background-color: rgba(0, 0, 0, 0.7);");
+  //  m_greyscreen->setVisible(false);
+  m_screen_stack->addWidget(m_greyscreen);
+  m_screen_stack->addWidget(m_screen);
+  m_screen_stack->setCurrentWidget(m_screen);
 
   m_screen_id = main_layout->addWidget(screen_frame);
 
@@ -119,4 +126,12 @@ MainWindow::woop(int count)
 {
   m_woop->setLoops(count);
   m_woop->play();
+}
+
+void
+MainWindow::greyout(bool value)
+{
+  if (value) {
+    m_screen_stack->setCurrentWidget(m_greyscreen);
+  }
 }

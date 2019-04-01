@@ -1,8 +1,11 @@
 #include "mainwindow.h"
 #include <QApplication>
 
+#include <QLoggingCategory>
+
 #include "log4qt/consoleappender.h"
-#include "log4qt/loggerobject.h"
+//#include "log4qt/loggerobject.h"
+#include "log4qt/logger.h"
 #include "log4qt/logmanager.h"
 #include "log4qt/ttcclayout.h"
 
