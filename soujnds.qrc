@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/sound">
+        <file alias="alien">Alien_Siren-KevanGC-610357990.wav</file>
+        <file alias="siren">Siren_Noise-KevanGC-1337458893.wav</file>
+        <file alias="woop">Woop Woop-SoundBible.com-198943467.wav</file>
+    </qresource>
+</RCC>
