@@ -1,5 +1,11 @@
 #include "startscreen.h"
 
+/*!
+  \class StartScreen
+  \brief The StartScreen is where you start and where you end up at the end of
+  the game.
+*/
+
 const QString StartScreen::VIRUS_NAME = QStringLiteral("VIRUS");
 const QString StartScreen::GAME_MESSAGE_1 =
   QStringLiteral("YOU CONTROL AN ANTIBODY o THAT MUST");

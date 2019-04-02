@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/icon">
+        <file>virus.png</file>
+        <file>.astylerc</file>
+        <file>virus32.png</file>
+        <file>virus64.png</file>
+    </qresource>
+</RCC>

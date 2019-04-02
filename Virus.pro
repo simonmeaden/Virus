@@ -30,15 +30,17 @@ SOURCES += \
     mainwindow.cpp \
     virusscreen.cpp \
     cell.cpp \
-    helpframe.cpp \
-    startscreen.cpp
+    startscreen.cpp \
+    helpscreen.cpp \
+    greyablewidget.cpp
 
 HEADERS += \
     mainwindow.h \
     virusscreen.h \
     cell.h \
-    helpframe.h \
-    startscreen.h
+    startscreen.h \
+    helpscreen.h \
+    greyablewidget.h
 
 #FORMS +=
 
@@ -49,6 +51,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 RESOURCES += \
     font.qrc \
-    soujnds.qrc
+    icon.qrc \
+    sounds.qrc
 
 unix|win32: LIBS += -llog4qt

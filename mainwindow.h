@@ -12,6 +12,7 @@
 #include <QStackedLayout>
 
 class VirusScreen;
+class GreyableWidget;
 
 class MainWindow : public QMainWindow
 {
@@ -23,9 +24,8 @@ public:
 
 protected:
   QStackedLayout* main_layout;
-  QStackedLayout* m_screen_stack;
   VirusScreen* m_screen;
-  QLabel* m_greyscreen;
+  GreyableWidget* m_greyable;
   int m_start_id, m_screen_id, m_help_id;
   QSound* m_woop;
 
@@ -35,8 +35,7 @@ protected:
   void setToHelp();
   void setToStart();
   void woop(int count = 1);
-  void greyout(bool value = true);
-
+  void delayStart();
   static const int WIDTH = 700; // 616;
   static const int HEIGHT = 480;
 

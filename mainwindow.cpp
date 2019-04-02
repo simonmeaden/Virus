@@ -1,8 +1,30 @@
 #include "mainwindow.h"
 
-#include "helpframe.h"
+#include "greyablewidget.h"
+#include "helpscreen.h"
 #include "startscreen.h"
 #include "virusscreen.h"
+
+#define HIDE_SOUNDS
+
+/*! \mainpage Virus game
+
+   \section intro_sec A simple Snake like game based on the BBC Micro Virus
+   game.
+
+   The Virus game is similar to snake but involves the blocking of virus. The
+   Virus, denoted by a *, is an auto created snake like figure which wanders
+   around the screen leaving a 'tail' of virus cells. You control the
+   antibodies, denoted by the 'o' character which behaves in a similar way but
+   controlled by you via the direction keys on the keyboard. If your antibody
+   hits a virus cell, the wall or your own tail you are eliminated. If you
+   succeed in limiting the virus' movement so that it has nowhere to go you win
+   this level. At which point a second virus is created and you start again with
+   two virus to fight, then three and so on.
+
+   \section install_sec TODO
+
+*/
 
 MainWindow::MainWindow(QWidget* parent)
   : QMainWindow(parent) //,
@@ -38,29 +60,17 @@ MainWindow::initGui()
   StartScreen* start = new StartScreen(this);
   m_start_id = main_layout->addWidget(start);
 
-  QFrame* screen_frame = new QFrame(this);
-
-  m_screen_stack = new QStackedLayout(this);
-  m_screen_stack->setStackingMode(QStackedLayout::StackAll);
-
-  screen_frame->setLayout(m_screen_stack);
-
+  m_greyable = new GreyableWidget(this);
   m_screen = new VirusScreen(this);
+  m_greyable->setWidget(m_screen);
   connect(m_screen, &VirusScreen::gameFinished, this, &MainWindow::setToStart);
   connect(m_screen, &VirusScreen::crashed, this, &MainWindow::woop);
-  connect(m_screen, &VirusScreen::crashed, this, &MainWindow::setToStart);
-  connect(m_screen, &VirusScreen::crashed, this, &MainWindow::greyout);
-
-  m_greyscreen = new QLabel(this);
-  //  m_greyscreen->setSizePolicy(QSizePolicy::Expanding,
-  //    QSizePolicy::Expanding);
-  m_greyscreen->setStyleSheet("background-color: rgba(0, 0, 0, 0.7);");
-  //  m_greyscreen->setVisible(false);
-  m_screen_stack->addWidget(m_greyscreen);
-  m_screen_stack->addWidget(m_screen);
-  m_screen_stack->setCurrentWidget(m_screen);
-
-  m_screen_id = main_layout->addWidget(screen_frame);
+  connect(m_screen,
+          &VirusScreen::crashed,
+          m_greyable,
+          qOverload<>(&GreyableWidget::greyout));
+  connect(m_screen, &VirusScreen::crashed, this, &MainWindow::delayStart);
+  m_screen_id = main_layout->addWidget(m_greyable);
 
   HelpScreen* help = new HelpScreen(this);
   m_help_id = main_layout->addWidget(help);
@@ -76,30 +86,40 @@ MainWindow::eventFilter(QObject* /*object*/, QEvent* event)
 {
   if (event->type() == QEvent::KeyPress) {
     QKeyEvent* key_event = static_cast<QKeyEvent*>(event);
+
     if (key_event->key() == Qt::Key_Up) {
       m_screen->keyNorth();
       return true;
+
     } else if (key_event->key() == Qt::Key_Down) {
       m_screen->keySouth();
       return true;
+
     } else if (key_event->key() == Qt::Key_Left) {
       m_screen->keyWest();
       return true;
+
     } else if (key_event->key() == Qt::Key_Right) {
       m_screen->keyEast();
       return true;
+
     } else if (key_event->key() == Qt::Key_Space) {
       if (key_event->modifiers().testFlag(Qt::ControlModifier)) {
         main_layout->setCurrentIndex(m_screen_id);
         m_screen->resetGame();
+
       } else {
         main_layout->setCurrentIndex(m_screen_id);
         m_screen->resetGame();
       }
+
       return true;
-    } else
+
+    } else {
       return false;
+    }
   }
+
   return false;
 }
 
@@ -124,14 +144,14 @@ MainWindow::setToStart()
 void
 MainWindow::woop(int count)
 {
+#ifndef HIDE_SOUNDS
   m_woop->setLoops(count);
   m_woop->play();
+#endif
 }
 
 void
-MainWindow::greyout(bool value)
+MainWindow::delayStart()
 {
-  if (value) {
-    m_screen_stack->setCurrentWidget(m_greyscreen);
-  }
+  QTimer::singleShot(4000, this, &MainWindow::setToStart);
 }
