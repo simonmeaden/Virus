@@ -48,12 +48,13 @@ struct CellData
     EAST,
     WEST,
   };
+  CellData(QPoint pt);
   CellData(int x, int y);
   static Direction randomDirection();
   QPair<Direction, Direction> nextDirections();
 
   Direction direction;
-  int column, row;
+  QPoint point;
 };
 typedef QSharedPointer<CellData> Data;
 

@@ -53,10 +53,14 @@ VirusCell::text() const
 /* CellData
  *****************************************************************************/
 
+CellData::CellData(QPoint pt)
+{
+  point = pt;
+}
+
 CellData::CellData(int x, int y)
 {
-  column = x;
-  row = y;
+  point = QPoint(x, y);
   direction = randomDirection();
 }
 

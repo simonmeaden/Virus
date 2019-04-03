@@ -1,6 +1,6 @@
 #include "greyablewidget.h"
 
-const QString GreyableWidget::STYLE_STRING =
+const QString GreyableWidget::OPACITY_STRING =
   "background-color: rgba(%1, %2, %3, %4);";
 const QString GreyableWidget::CLEAR_STRING =
   "background-color: rgba(0, 0, 0, 0.0);";
@@ -16,18 +16,19 @@ const QString GreyableWidget::CLEAR_STRING =
 */
 GreyableWidget::GreyableWidget(QWidget* parent)
   : QFrame(parent)
-  , m_greyout_color(QColor("white"))
-  , m_percentage(0)
+  , m_greyout_color(QColor("red"))
+  , m_percentage(50)
 {
   m_screen_stack = new QStackedLayout(this);
   m_screen_stack->setStackingMode(QStackedLayout::StackAll);
   setLayout(m_screen_stack);
   m_greyscreen = new QLabel(this);
-  m_greyscreen->setStyleSheet("background-color: rgba(0, 0, 0, 0.0);");
-  m_screen_stack->addWidget(m_greyscreen);
-  m_screen_stack->setCurrentWidget(m_greyscreen);
-  setGreyoutString();
+  //    m_greyscreen->setAttribute(Qt::WA_TranslucentBackground, true);
+  m_messagescreen = new MessageWidget(this);
+  //  m_messagescreen->setAttribute(Qt::WA_TranslucentBackground, true);
 }
+
+GreyableWidget::~GreyableWidget() {}
 
 /*!
    \brief Use \c widget() to recover a pointer to your custom widget.
@@ -51,8 +52,9 @@ GreyableWidget::setWidget(QWidget* widget)
 {
   m_widget = widget;
   m_screen_stack->addWidget(widget);
-  m_screen_stack->setCurrentWidget(m_greyscreen);
-  clear();
+  m_screen_stack->addWidget(m_greyscreen);
+  //  m_screen_stack->addWidget(m_messagescreen);
+  clearGreyout();
 }
 
 /*!
@@ -84,7 +86,7 @@ GreyableWidget::greyout(QColor color, int percent)
    \brief \c clear() is used to remove the greyout.
 */
 void
-GreyableWidget::clear()
+GreyableWidget::clearGreyout()
 {
   clearGreyoutString(); // reset to default value.
 }
@@ -147,15 +149,37 @@ GreyableWidget::setPercentage(int percent)
 }
 
 void
+GreyableWidget::setMessage(QString message, int timeout)
+{
+  QTimer::singleShot(timeout, this, &GreyableWidget::clearMessage);
+  m_messagescreen->enableMessage();
+  m_messagescreen->setMessage(message);
+  update();
+}
+
+void
+GreyableWidget::clearMessage()
+{
+  //  QPainter* painter = new QPainter(this);
+  //  int w = width();
+  //  int h = height();
+  //  painter->eraseRect(0, 0, w, h);
+  m_messagescreen->disableMessage();
+  m_messagescreen->setMessage(QString());
+  update();
+}
+
+void
 GreyableWidget::setGreyoutString()
 {
-  QString s = STYLE_STRING;
+  QString s = OPACITY_STRING;
   int r = m_greyout_color.red();
   int g = m_greyout_color.green();
   int b = m_greyout_color.blue();
   int a = m_percentage;
-  QString p = QString::number((a / 100.0), 'g', 2);
-  s = s.arg(r).arg(g).arg(b).arg(a).replace("XX", "%");
+  QString p = QString::number((a / 100.0), 'f', 2);
+  s = s.arg(r).arg(g).arg(b).arg(p);
+  qWarning() << s;
   m_greyscreen->setStyleSheet(s);
 }
 
@@ -168,11 +192,63 @@ GreyableWidget::clearGreyoutString()
 void
 GreyableWidget::setGreyoutString(QColor color, int percent)
 {
-  QString s = STYLE_STRING;
+  QString s = OPACITY_STRING;
   int r = color.red();
   int g = color.green();
   int b = color.blue();
   int a = percent;
-  s.arg(r).arg(g).arg(b).arg(a).replace("#", "%");
+  QString p = QString::number((a / 100.0), 'f', 2);
+  s = s.arg(r).arg(g).arg(b).arg(a);
   m_greyscreen->setStyleSheet(s);
+}
+
+MessageWidget::MessageWidget(QWidget* parent)
+  : QLabel(parent)
+  , m_paint_message(false)
+
+{}
+
+MessageWidget::~MessageWidget() {}
+
+QString
+MessageWidget::message() const
+{
+  return m_message;
+}
+
+void
+MessageWidget::setMessage(const QString& message)
+{
+  m_message = message;
+}
+
+void
+MessageWidget::enableMessage()
+{
+  m_paint_message = true;
+}
+
+void
+MessageWidget::disableMessage()
+{
+  m_paint_message = false;
+}
+
+void
+MessageWidget::paintEvent(QPaintEvent*)
+{
+  if (m_paint_message) {
+    QPainter* painter = new QPainter(this);
+    int w = width();
+    int h = height();
+    int len = painter->fontMetrics().width(m_message);
+    int mH = painter->fontMetrics().height();
+    int x = int((w - len) / 2.0);
+    int y = int((h) / 2.0) - mH;
+    painter->setPen(QColor("white"));
+    painter->setBrush(QColor("white"));
+    painter->drawRect(x, y, len, mH);
+    painter->setPen(QColor("red"));
+    painter->drawText(x, y, m_message);
+  }
 }

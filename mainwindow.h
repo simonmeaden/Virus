@@ -25,7 +25,7 @@ public:
 protected:
   QStackedLayout* main_layout;
   VirusScreen* m_screen;
-  GreyableWidget* m_greyable;
+  //  GreyableWidget* m_greyable;
   int m_start_id, m_screen_id, m_help_id;
   QSound* m_woop;
 
@@ -35,7 +35,8 @@ protected:
   void setToHelp();
   void setToStart();
   void woop(int count = 1);
-  void delayStart();
+  //  void delayStart(int delay);
+  //  void endDelay();
   static const int WIDTH = 700; // 616;
   static const int HEIGHT = 480;
 

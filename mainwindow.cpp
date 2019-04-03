@@ -60,20 +60,14 @@ MainWindow::initGui()
   StartScreen* start = new StartScreen(this);
   m_start_id = main_layout->addWidget(start);
 
-  m_greyable = new GreyableWidget(this);
   m_screen = new VirusScreen(this);
-  m_greyable->setWidget(m_screen);
   connect(m_screen, &VirusScreen::gameFinished, this, &MainWindow::setToStart);
   connect(m_screen, &VirusScreen::crashed, this, &MainWindow::woop);
-  connect(m_screen,
-          &VirusScreen::crashed,
-          m_greyable,
-          qOverload<>(&GreyableWidget::greyout));
-  connect(m_screen, &VirusScreen::crashed, this, &MainWindow::delayStart);
-  m_screen_id = main_layout->addWidget(m_greyable);
+  connect(m_screen, &VirusScreen::switchToStart, this, &MainWindow::setToStart);
+  m_screen_id = main_layout->addWidget(m_screen);
 
-  HelpScreen* help = new HelpScreen(this);
-  m_help_id = main_layout->addWidget(help);
+  //  HelpScreen* help = new HelpScreen(this);
+  //  m_help_id = main_layout->addWidget(help);
 
   setToStart();
 
@@ -148,10 +142,4 @@ MainWindow::woop(int count)
   m_woop->setLoops(count);
   m_woop->play();
 #endif
-}
-
-void
-MainWindow::delayStart()
-{
-  QTimer::singleShot(4000, this, &MainWindow::setToStart);
 }

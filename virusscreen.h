@@ -25,7 +25,7 @@ public:
   void keySouth();
   void keyEast();
   void keyWest();
-  void fucked();
+  //  void fucked();
 
   static const int max_column = 40;
   static const int max_row = 25;
@@ -46,17 +46,21 @@ protected:
   QList<QList<Cell>> m_board;
   QList<Data> m_virus;
   Data m_antibody;
+  bool m_paint_message;
+  QString m_message;
 
   bool m_finished;
-  bool m_fucked;
+  //  bool m_fucked;
   QTimer* m_game_timer;
+  int m_virus_count;
 
-  static const int antibody_x = 21;
-  static const int antibody_y = 13;
+  static const QPoint antibody;
   static const int virus_x = 6;
   static const int virus_y = 6;
-  static const int TIMEOUT = 1000;
+  static const int TIMEOUT = 300; // 1000;
+  static const int MESSAGE_TIMEOUT = 4000;
   Cell cellAt(int column, int row);
+  Cell cellAt(QPoint pt);
   Cell cellAt(Data data);
   void paintEvent(QPaintEvent* event) override;
   void resetAntibody();
@@ -74,6 +78,9 @@ protected:
 
   bool isGoodVirusMove(Cell next_cell);
   bool isGoodAntibodyMove(Cell next_cell);
+  void startMessage();
+  void endMessage();
+  QPoint randomPoint();
 };
 
 #endif // VIRUSSCREEN_H

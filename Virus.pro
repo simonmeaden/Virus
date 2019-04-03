@@ -31,16 +31,14 @@ SOURCES += \
     virusscreen.cpp \
     cell.cpp \
     startscreen.cpp \
-    helpscreen.cpp \
-    greyablewidget.cpp
+    helpscreen.cpp
 
 HEADERS += \
     mainwindow.h \
     virusscreen.h \
     cell.h \
     startscreen.h \
-    helpscreen.h \
-    greyablewidget.h
+    helpscreen.h
 
 #FORMS +=
 
